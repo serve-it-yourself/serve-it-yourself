@@ -1,52 +1,64 @@
 <script lang="ts">
-    import '@skeletonlabs/skeleton/themes/theme-modern.css';
-    import '@skeletonlabs/skeleton/styles/skeleton.css';
-    import "../app.postcss";
+    import {
+        Header,
+        HeaderNav,
+        HeaderNavItem,
+        SideNav,
+        SideNavItems,
+        SideNavLink,
+        SkipToContent,
+        Content,
+        Grid,
+        Row,
+        Column,
+    } from "carbon-components-svelte";
+    import Fade from "carbon-icons-svelte/lib/Fade.svelte";
 
-    import {AppShell, AppRail, AppRailTile, AppRailAnchor, AppBar} from '@skeletonlabs/skeleton';
-    import {TitleStore} from "../stores/title_store";
+    import "carbon-components-svelte/css/white.css";
+    import {page} from "$app/stores";
 
-    let titleList = [
-        {title: "Jetti", route: "/jetti"},
-        {title: "lux", route: "/lux"},
-        {title: "sona", route: "/sona"},
-        {title: "thresh", route: "/thresh"},
+    let isSideNavOpen = false;
+
+    let items = [
+        {text: "Index", href: "/", isSelected: false},
+        {text: "Jetti", href: "/jetti", isSelected: false},
+        {text: "Lux", href: "/lux", isSelected: false},
+        {text: "Sona", href: "/sona", isSelected: false},
+        {text: "Thresh", href: "/thresh", isSelected: false},
+        {text: "Mediator", href: "/mediator", isSelected: false},
     ];
 
-    let currentTile: number = 0;
-    let currentTitle: string = $TitleStore;
-
-    TitleStore.subscribe((value) => {
-        currentTitle = value;
+    $: items = items.map((item) => {
+        item.isSelected = item.href === $page.url.pathname;
+        return item;
     });
 </script>
 
-<AppShell>
-    <svelte:fragment slot="header">
-        <AppBar gridColumns="grid-cols-3" slotDefault="place-self-center" slotTrail="place-content-end">
-            <svelte:fragment slot="lead"></svelte:fragment>
-            {currentTitle}
-            <svelte:fragment slot="trail"></svelte:fragment>
-        </AppBar>
+<Header company="IBM" platformName="Carbon Svelte" bind:isSideNavOpen>
+    <svelte:fragment slot="skip-to-content">
+        <SkipToContent />
     </svelte:fragment>
-    <svelte:fragment slot="sidebarLeft">
-        <AppRail>
-            <svelte:fragment slot="lead">
-                <AppRailAnchor href="/">Index</AppRailAnchor>
-            </svelte:fragment>
-            {#each titleList as title}
-                <AppRailTile bind:group={currentTile} name={title.title} value={title.route} title={title.title}>
-                    <svelte:fragment slot="lead"></svelte:fragment>
-                    <span>{title.title}</span>
-                </AppRailTile>
-            {/each}
-        </AppRail>
-    </svelte:fragment>
-    <!-- (sidebarRight) -->
-    <!-- (pageHeader) -->
-    <!-- Router Slot -->
-    <slot/>
-    <!-- ---- / ---- -->
-    <!-- (pageFooter) -->
-    <svelte:fragment slot="footer">This site is a introduction of "Serve it Yourself!!" project.</svelte:fragment>
-</AppShell>
+    <HeaderNav>
+        {#each items as item}
+            <HeaderNavItem href={item.href} text={item.text} />
+        {/each}
+    </HeaderNav>
+</Header>
+
+<SideNav bind:isOpen={isSideNavOpen} rail>
+    <SideNavItems>
+        {#each items as item}
+            <SideNavLink icon={Fade} text={item.text} href={item.href} isSelected={item.isSelected} />
+        {/each}
+    </SideNavItems>
+</SideNav>
+
+<Content>
+    <Grid>
+        <Row>
+            <Column>
+                <slot />
+            </Column>
+        </Row>
+    </Grid>
+</Content>
