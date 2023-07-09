@@ -34,7 +34,7 @@
     });
 </script>
 
-<Header company="IBM" platformName="Carbon Svelte" bind:isSideNavOpen>
+<Header company="SM" platformName="Serve it Yourself!!" bind:isSideNavOpen>
     <svelte:fragment slot="skip-to-content">
         <SkipToContent />
     </svelte:fragment>
